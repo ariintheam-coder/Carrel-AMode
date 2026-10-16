@@ -26,21 +26,6 @@ Serving over `http(s)` is recommended over `file://`: browsers disagree about wh
 
 **Privacy** — no network requests, no analytics, no accounts. The file makes zero outbound connections, which you can verify by reading it or by watching your network tab.
 
-## Screenshots
-
-<table>
-<tr>
-<td width="50%">
-<img src="docs/screenshots/details.png" alt="Book detail panel showing cover, description, publisher, star rating and reading progress, over a dimmed library">
-<br><sub><b>Everything from the file itself.</b> Description, publisher, date and cover come out of the book's own package file. Nothing is looked up online.</sub>
-</td>
-<td width="50%">
-<img src="docs/screenshots/typefaces.png" alt="Reading view with the preferences panel open, showing six typeface options each rendered in its own font">
-<br><sub><b>Six typefaces, three page themes.</b> Each option previews in the face it selects. System stacks only — no webfonts, no network.</sub>
-</td>
-</tr>
-</table>
-
 <!-- Add as you capture them: drop the file in docs/screenshots/ and move a row
      above this comment. `node tools/verify.mjs` lists anything missing.
 
