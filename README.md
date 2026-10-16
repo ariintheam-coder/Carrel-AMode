@@ -1,36 +1,20 @@
-# Carrel
+# Carrel-AMode
 
-**A complete EPUB library and reader in one HTML file.** No build step, no dependencies, no server, no account. Drag books in; they stay on your device.
+**A complete EPUB library and reader in one HTML file.** 
 
-> *carrel* — the small enclosed desk in the library stacks, where one person reads alone.
-
-[**Live demo**](https://smadgulkar.github.io/carrel/) · [**Download**](https://github.com/smadgulkar/carrel/releases/latest/download/index.html) · ~64 KB
-
-<img src="docs/screenshots/library.png" alt="The Carrel library: book covers on a dark background, with search and sort controls above" width="100%">
+*DEFINITION OF carrel* — the small enclosed desk in the library stacks, where one person reads alone.
 
 ---
 
 ## Why this exists
 
-Every browser EPUB reader I could find bundles a ZIP library — JSZip, zip.js, or whatever epub.js pulls in. That made sense for a long time, because browsers couldn't unzip anything.
-
-They can now. `DecompressionStream('deflate-raw')` shipped in Chrome 103, Firefox 113 and Safari 16.4, and an EPUB is just a ZIP full of XHTML. That removes the last reason to bundle anything at all.
-
-So this is one file you can read top to bottom in an afternoon: a ZIP reader, an OPF parser, an IndexedDB library, and a paginator. Save it, double-click it, read a book on a plane.
+Every browser EPUB reader I could find a good library system that stored my books and had a good reader all locally
 
 ## Use it
-
-**Hosted** — open the [demo](https://smadgulkar.github.io/carrel/) and drag EPUBs onto the page.
 
 **Local file** — download `index.html`, double-click. Works offline, forever, with no toolchain.
 
 **Self-host** — copy `index.html` to any static host. That's the whole deployment.
-
-```sh
-git clone https://github.com/smadgulkar/carrel.git
-cd carrel
-python3 -m http.server        # then open http://localhost:8000
-```
 
 Serving over `http(s)` is recommended over `file://`: browsers disagree about whether IndexedDB works on `file://` origins, and a real origin means your library reliably persists.
 
@@ -106,15 +90,6 @@ Needs `DecompressionStream`: **Chrome / Edge 103+, Firefox 113+, Safari 16.4+**.
 
 Issues and pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) — the short version is that it stays a single file with no dependencies, and CI enforces that.
 
-## Prior art
-
-Worth your time if this doesn't fit:
-
-- [**Readk.it**](https://readk.it/) — also a single-file reader; bundles zip.js, aimed at publishers shipping one book
-- [**epub.js**](https://github.com/futurepress/epub.js) / [**foliate-js**](https://github.com/johnfactotum/foliate-js) — libraries to build readers on, far more complete than this parser
-- [**Readest**](https://readest.com/), [**Koodo Reader**](https://koodo.960960.xyz/) — full cross-platform apps with sync, notes and TTS
-- [**Thorium**](https://www.edrlab.org/software/thorium-reader/) — the reference EPUB 3 implementation, with real accessibility support
-- [**calibre**](https://calibre-ebook.com/) — the library manager everyone actually uses
 
 ## License
 
