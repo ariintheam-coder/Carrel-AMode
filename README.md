@@ -2,13 +2,15 @@
 
 **A complete EPUB library and reader in one HTML file.** 
 
-*DEFINITION OF carrel* — the small enclosed desk in the library stacks, where one person reads alone.
+*DEFINITION OF "carrel"* — the small enclosed desk in the library stacks, where one person reads alone.
 
 ---
 
 ## Why this exists
 
-Every browser EPUB reader I could find a good library system that stored my books and had a good reader all locally
+Every browser EPUB reader I could find never had a decent library system that stored my books and had a good reader all locally in a file or on a browser 
+
+But not anymore here is Carrel-AMode(for the enthusiasts!)
 
 ## Use it
 
