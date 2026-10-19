@@ -1,82 +1,59 @@
 # Carrel-AMode
 
-**A complete EPUB library and reader in one HTML file.** 
+**A complete EPUB library and reader in one HTML file.**
 
-*DEFINITION OF "carrel"* — the small enclosed desk in the library stacks, where one person reads alone.
-
----
+*Carrel* is a small enclosed desk in a library stack, where one person reads alone.
 
 ## Why this exists
 
-Every browser EPUB reader I could find never had a decent library system that stored my books and had a good reader all locally in a file or on a browser 
-
-But not anymore here is Carrel-AMode(for the enthusiasts!)
+Carrel is a local-first EPUB library and reader: keep books on your device, organize a personal shelf, and read without an account or a required network connection.
 
 ## Use it
 
-**Local file** — download `index.html`, double-click. Works offline, forever, with no toolchain.
+**Local file** — open `index.html` in a browser. It works offline. Browser support for persistent storage from `file://` varies, so a local or static web server is more reliable if you want your library to persist.
 
-**Self-host** — copy `index.html` to any static host. That's the whole deployment.
+**Self-host** — copy `index.html` to any static host. No build step or dependencies are needed.
 
-Serving over `http(s)` is recommended over `file://`: browsers disagree about whether IndexedDB works on `file://` origins, and a real origin means your library reliably persists.
+Use **Add books** to choose **Add files** or **Add folder**. Folder selection imports EPUB files from the chosen folder (including subfolders where supported by the browser). You can also drag and drop EPUB files onto the page.
 
 ## What it does
 
-**Library** — drag and drop import, metadata and cover extraction, search, sort by title / author / date added / date opened / rating, 5-star ratings, reading progress on each cover. Books without cover art get a generated cloth binding, hashed to a set of book-cloth colours with gilt lettering, so a folder of random EPUBs still looks like a shelf.
+**Library** — stores imported books locally in IndexedDB, extracts metadata and cover art, and provides search, sorting by recently opened / added, title, author, or rating, and five-star ratings. Books without cover art get generated cloth bindings. You can also set a custom cover.
 
-**Reader** — paginated text (not scrolling), whole-book page numbers, table of contents from EPUB 3 `nav` or EPUB 2 NCX, six typefaces, three page themes, adjustable size / leading / margins, keyboard and swipe navigation, position saved per book.
+**Reader** — paginated reading with whole-book page numbers, a table of contents from EPUB 3 navigation or EPUB 2 NCX, six system typeface choices, Paper / Sepia / Night page themes, adjustable type size, line spacing and margins, keyboard and touch navigation, and saved reading progress.
 
-**Privacy** — no network requests, no analytics, no accounts. The file makes zero outbound connections, which you can verify by reading it or by watching your network tab.
+**Notes** — create margin notes at your reading position and highlight selected passages with optional notes and tags. Page pins make margin notes easy to revisit. The library Notes panel can filter notes by book, tag, and note type, and jump back to their locations.
 
-<!-- Add as you capture them: drop the file in docs/screenshots/ and move a row
-     above this comment. `node tools/verify.mjs` lists anything missing.
-
-<table>
-<tr>
-<td width="50%">
-<img src="docs/screenshots/reader-night.png" alt="A page of text in night theme, light type on near-black">
-<br><sub><b>Night theme.</b> The same page after dark.</sub>
-</td>
-<td width="50%">
-<img src="docs/screenshots/bindings.png" alt="Generated cloth bindings in green, oxblood and navy with gold lettering">
-<br><sub><b>Generated cloth bindings.</b> Books with no cover art get one, hashed to a set of real book-cloth colours.</sub>
-</td>
-</tr>
-</table>
-
--->
+**Privacy** — books, covers, preferences, progress, and notes are stored locally in the browser; books are not uploaded to a service. No account is required.
 
 ## How it works
 
 | Part | Approach |
 |---|---|
-| **Unzip** | Parses the ZIP central directory by hand, inflates entries with `DecompressionStream('deflate-raw')`. Handles stored and deflated entries, plus ZIP64. |
-| **Parse** | `META-INF/container.xml` → OPF package → manifest, spine, Dublin Core metadata, cover. TOC from the EPUB 3 nav document, falling back to NCX. |
-| **Store** | IndexedDB, holding the original file as a `Blob`. No base64 inflation. |
-| **Render** | Chapter XHTML written into a same-origin iframe. Scripts and `on*` handlers stripped; images inlined as data URLs so it works from `file://` too. |
-| **Paginate** | CSS multi-column with the gap set to twice the margin, so one column advance equals exactly one viewport width. Pages move by `transform`, not `scrollLeft` — no scroll container ambiguity, no clamping on the last page. Page count comes from measuring where a zero-width probe at the end of the text actually landed. |
-| **Count** | Whole-book page numbers need every chapter laid out, so chapters are paginated in a hidden iframe in the background and cached in IndexedDB against a signature of everything that affects reflow. A calibrated estimate shows until the exact count lands. |
+| **Unzip** | Parses the ZIP central directory and inflates stored and deflated entries with `DecompressionStream('deflate-raw')`; includes a ZIP64 fallback. |
+| **Parse** | Reads `META-INF/container.xml` and the OPF package for the manifest, spine, Dublin Core metadata, and cover. Reads the table of contents from an EPUB 3 nav document or, as a fallback, an EPUB 2 NCX. |
+| **Store** | IndexedDB holds the original EPUB as a `Blob`, along with library data and reader state. |
+| **Render** | Chapter XHTML is written into a same-origin iframe. Scripts and inline event handlers are stripped; book stylesheets are inlined and images are converted to data URLs for local rendering. |
+| **Paginate** | CSS multi-column layout paginates each chapter. A hidden iframe counts pages in the background; counts are cached against the reading layout settings, while an estimate is shown until counting finishes. |
+| **Annotate** | Highlights and margin notes, including their notes and tags, are stored in IndexedDB separately from the EPUB file. |
 
 ## Limitations
 
-Known and mostly deliberate:
-
-- **DRM'd books won't open.** They're encrypted. This project will not add circumvention — see [CONTRIBUTING](CONTRIBUTING.md).
-- **Fixed-layout EPUBs** (comics, picture books) reflow into one column instead of honouring their fixed pages.
-- **Reading position is a spine index plus a fraction**, not a proper [EPUB CFI](https://idpf.org/epub/linking/cfi/). It survives font changes to within about a page.
-- **No annotations, highlights or bookmarks** yet.
-- **EPUB only.** No MOBI, AZW3 or PDF.
+- **DRM-protected books won't open.** This project does not circumvent DRM.
+- **Fixed-layout EPUBs** (such as comics and picture books) are reflowed rather than displayed as fixed pages.
+- **Reading position** uses a spine index and fraction, not a proper [EPUB CFI](https://idpf.org/epub/linking/cfi/), so it may shift by about a page after layout changes.
+- **EPUB only.** MOBI, AZW3, and PDF are not supported.
 - **Nested tables of contents** are flattened to one level.
-- **Typefaces are system stacks**, so Literary and Minimal render differently on macOS and Windows. Loading real fonts would mean a network request.
+- **Typefaces are system font stacks**, so their appearance varies by operating system. The reader does not download fonts.
+- **Folder selection depends on browser support.** If folder picking is unavailable, use **Add files** or drag and drop EPUBs instead.
 
 ## Browser support
 
-Needs `DecompressionStream`: **Chrome / Edge 103+, Firefox 113+, Safari 16.4+**. The app detects this and says so rather than failing silently.
+The app requires `DecompressionStream`: Chrome / Edge 103+, Firefox 113+, or Safari 16.4+. It checks for this API and displays a message in unsupported browsers. Folder selection also depends on browser support for directory file pickers.
 
 ## Contributing
 
-Issues and pull requests welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) — the short version is that it stays a single file with no dependencies, and CI enforces that.
-
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md). The project is intended to remain a single HTML file with no dependencies.
 
 ## License
 
