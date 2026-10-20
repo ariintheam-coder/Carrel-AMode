@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Carrel — a local library</title>
+<title>Carrel AMode — a local library</title>
 <style>
 /* ─────────────────────────────────────────────────────────
    TOKENS
@@ -21,6 +21,7 @@
   --vellum-ink: #000000;
   --green-deep: #c9d8bc;
   --cream:      #f5f0e3;
+  --focus-ring: #36583b;
 
   --serif: "Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua","Hoefler Text",Georgia,serif;
   --sans: ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -81,6 +82,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .btn-quiet:hover{color:var(--text);border-color:var(--edge)}
   .btn-danger:hover{border-color:#a5685d;color:#d7a093}
 
+body.high-contrast{--ink:#fff;--ink-raised:#fff;--ink-sunk:#fff;--edge:#444;--text:#000;--muted:#222;--vellum:#fff;--vellum-ink:#000}
+:focus-visible{outline:3px solid var(--focus-ring);outline-offset:3px}
+
 .add-menu{position:relative}
 .add-menu-options{
   position:absolute;top:calc(100% + 6px);right:0;z-index:40;min-width:150px;
@@ -118,7 +122,13 @@ select.search{max-width:170px;cursor:pointer;appearance:none;padding-right:26px;
 .library-notes-filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;border-bottom:1px solid var(--edge)}
 .library-notes-filters .search{max-width:none;width:100%;min-width:0}
 #notesTypeFilter{grid-column:1/-1}
-#libraryNotesList{overflow-y:auto;padding:12px;flex:1}
+  #libraryNotesList{overflow-y:auto;padding:12px;flex:1}
+#readingStats{position:absolute;z-index:32;top:92px;left:22px;bottom:18px;width:min(400px,calc(100vw - 36px));display:none;flex-direction:column;background:var(--ink);border:1px solid var(--edge);box-shadow:0 18px 44px rgba(0,0,0,.22);padding:16px;overflow:auto}
+#readingStats.on{display:flex}
+#readingStats h2{font:400 21px var(--serif);margin:0}
+#readingStats .stats-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+#readingStats .stats-row{padding:10px 0;border-top:1px solid var(--edge);font-size:13px;line-height:1.5}
+
 .library-note-item{padding:12px;margin-bottom:10px;border:1px solid var(--edge);background:rgba(255,255,255,.22)}
 .library-note-item:last-child{margin-bottom:0}
 .library-note-book{font-size:9px;letter-spacing:.12em;text-transform:uppercase;opacity:.62;margin-bottom:6px}
@@ -252,6 +262,8 @@ body, body *{color:#000 !important}
 #marginNotes .margin-head .btn{margin-left:auto}
 #marginNotes .toc-close{font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.65;padding:6px}
 #marginNotes .toc-close:hover{opacity:1}
+.margin-filters{padding:10px 12px;border-bottom:1px solid rgba(120,110,95,.28)}
+.margin-filters .search{width:100%;max-width:none}
 #marginNotesList{overflow-y:auto;padding:12px;flex:1}
 .margin-item{padding:12px;margin-bottom:10px;border:1px solid rgba(120,110,95,.3);background:rgba(255,255,255,.2)}
 .margin-item:last-child{margin-bottom:0}
@@ -321,6 +333,7 @@ body, body *{color:#000 !important}
 #reader.on{display:flex}
 #reader[data-theme="sepia"]{--vellum:#eee6d3;--vellum-ink:#000000}
 #reader[data-theme="night"]{--vellum:#dfe8d7;--vellum-ink:#000000}
+#reader[data-high-contrast="true"]{--vellum:#fff;--vellum-ink:#000}
 
 .rbar{
   position:absolute;left:0;right:0;z-index:12;
@@ -407,6 +420,28 @@ body, body *{color:#000 !important}
 #reader[data-theme="night"] #prefs .seg button{border-color:#344235}
 #prefs .seg button.on{background:#c9d8bc;color:#000;opacity:1;border-color:#8fa382}
 #prefs input[type=range]{width:100%;accent-color:var(--vellum-ink)}
+#reader[data-dyslexic="true"] #page{letter-spacing:.035em}
+#reader[data-dyslexic="true"] #page{font-family:Arial,Verdana,sans-serif}
+.pref-check{display:flex;align-items:center;gap:8px;font-size:12px}
+#searchPanel{position:absolute;top:56px;left:50%;transform:translateX(-50%);z-index:21;width:min(480px,calc(100vw - 32px));max-height:min(65vh,520px);display:none;flex-direction:column;background:var(--vellum);border:1px solid rgba(120,110,95,.35);box-shadow:0 16px 38px rgba(0,0,0,.25)}
+#searchPanel.on{display:flex}
+#searchPanel .search-head{display:flex;gap:8px;padding:12px;border-bottom:1px solid var(--edge)}
+#searchPanel .search-head input{max-width:none;min-width:0}
+#searchResults{overflow-y:auto;padding:8px}
+.search-result{display:block;width:100%;text-align:left;padding:9px;border-bottom:1px solid var(--edge);font:13px/1.45 var(--serif)}
+.search-result small{display:block;font:10px var(--sans);opacity:.65;margin-bottom:3px}
+#highlightMenu{
+  position:absolute;z-index:35;display:none;min-width:220px;max-width:min(300px,calc(100vw - 20px));
+  padding:11px;background:var(--vellum);border:1px solid rgba(120,110,95,.45);
+  box-shadow:0 10px 30px rgba(0,0,0,.24);border-radius:var(--radius)
+}
+#highlightMenu.on{display:block}
+#highlightMenu .highlight-menu-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.62;margin:0 0 7px}
+#highlightMenu .highlight-colors{display:flex;gap:8px;margin-bottom:10px}
+#highlightMenu .highlight-color{width:25px;height:25px;border:2px solid rgba(0,0,0,.28);border-radius:50%;padding:0}
+#highlightMenu .highlight-color[aria-pressed="true"]{outline:2px solid #000;outline-offset:2px}
+#highlightMenu .highlight-menu-actions{display:flex;gap:6px;flex-wrap:wrap}
+#highlightMenu .highlight-menu-actions .btn{padding:6px 8px;font-size:9px}
 
 /* — table of contents — */
 #toc{
@@ -434,9 +469,11 @@ body, body *{color:#000 !important}
 
 @media (max-width:640px){
   .masthead{padding:20px 18px 14px}
-  .count{gap:6px}
+  .count{gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .count .btn{padding:6px 8px;font-size:9px}
   .count .eyebrow{display:none}
   #libraryNotes{top:84px;right:10px;bottom:10px;width:calc(100vw - 20px)}
+  #readingStats{top:84px;left:10px;bottom:10px;width:calc(100vw - 20px)}
   .toolbar{padding:12px 18px}
   .stacks{padding:24px 18px 70px}
   .shelf{grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:22px 14px}
@@ -455,10 +492,13 @@ body, body *{color:#000 !important}
 <!-- ══════════════ LIBRARY ══════════════ -->
 <div id="library">
   <header class="masthead">
-    <h1 class="wordmark">Carrel<em>.</em></h1>
+    <h1 class="wordmark">Carrel AMode<em>.</em></h1>
     <div class="count">
       <span class="eyebrow" id="tally">no books yet</span>
       <button class="btn" id="libraryNotesBtn" type="button" aria-expanded="false">Notes</button>
+      <button class="btn" id="statsBtn" type="button" aria-expanded="false">Reading stats</button>
+      <button class="btn" id="backupBtn" type="button" title="Export notes, highlights, reading progress and preferences; EPUB files are not included">Export backup</button>
+      <button class="btn" id="restoreBtn" type="button" title="Restore data from a Carrel AMode backup">Restore</button>
       <div class="add-menu">
         <button class="btn btn-solid" id="addBtn" type="button" aria-haspopup="true" aria-expanded="false">Add books</button>
         <div class="add-menu-options" id="addMenuOptions" hidden>
@@ -488,11 +528,21 @@ body, body *{color:#000 !important}
     <div class="library-notes-filters">
       <select class="search" id="notesBookFilter" aria-label="Filter notes by book"><option value="">All books</option></select>
       <select class="search" id="notesTagFilter" aria-label="Filter notes by tag"><option value="">All tags</option></select>
+      <select class="search" id="notesChapterFilter" aria-label="Filter notes by chapter"><option value="">All chapters</option></select>
       <select class="search" id="notesTypeFilter" aria-label="Filter note type">
         <option value="">All note types</option><option value="margin">Margin notes</option><option value="highlight">Highlights</option>
       </select>
     </div>
+    <div style="padding:10px 12px;border-bottom:1px solid var(--edge)"><button class="btn btn-quiet" id="exportNotesBtn" type="button">Export notes</button></div>
     <div id="libraryNotesList" aria-live="polite"></div>
+  </aside>
+
+  <aside id="readingStats" aria-label="Reading goals and history">
+    <div class="stats-head"><h2>Reading stats</h2><button class="toc-close" id="statsClose" type="button">Close</button></div>
+    <label class="eyebrow" for="dailyGoal">Daily reading goal (minutes)</label>
+    <input class="search" id="dailyGoal" type="number" min="1" max="1440" value="20">
+    <button class="btn btn-solid" id="saveGoal" type="button" style="margin:10px 0">Save goal</button>
+    <div id="statsSummary"></div>
   </aside>
 
   <div class="stacks">
@@ -510,7 +560,8 @@ body, body *{color:#000 !important}
   <div class="rbar top">
     <button class="rbtn" id="backBtn">← Library</button>
     <button class="rbtn" id="tocBtn">Contents</button>
-    <button class="rbtn" id="highlightBtn" title="Highlight selected text">Highlight</button>
+    <button class="rbtn" id="searchBtn" aria-expanded="false">Search</button>
+    <button class="rbtn" id="returnBtn" hidden>Previous place</button>
     <button class="rbtn" id="marginNotesBtn" aria-expanded="false">Margin notes</button>
     <span class="chap" id="chapName"></span>
     <button class="rbtn" id="prefsBtn">Aa</button>
@@ -529,22 +580,47 @@ body, body *{color:#000 !important}
     <span class="sub" id="locSub"></span>
   </div>
 
+  <section id="searchPanel" aria-label="Search this book">
+    <div class="search-head"><input class="search" id="bookSearch" type="search" placeholder="Find a name or phrase" autocomplete="off"><button class="btn" id="searchClose" type="button">Close</button></div>
+    <div id="searchResults" aria-live="polite"></div>
+  </section>
+
+  <section id="highlightMenu" aria-label="Highlight options" role="group">
+    <p class="highlight-menu-label">Highlight color</p>
+    <div class="highlight-colors">
+      <button class="highlight-color" type="button" data-highlight-color="yellow" aria-label="Yellow highlight" title="Yellow" style="background:#ffe36e"></button>
+      <button class="highlight-color" type="button" data-highlight-color="green" aria-label="Green highlight" title="Green" style="background:#b8e986"></button>
+      <button class="highlight-color" type="button" data-highlight-color="blue" aria-label="Blue highlight" title="Blue" style="background:#9edcf2"></button>
+      <button class="highlight-color" type="button" data-highlight-color="pink" aria-label="Pink highlight" title="Pink" style="background:#f5b4c8"></button>
+    </div>
+    <div class="highlight-menu-actions">
+      <button class="btn btn-quiet" id="highlightNoteAction" type="button">Add / edit note</button>
+      <button class="btn btn-quiet btn-danger" id="highlightDeleteAction" type="button">Delete</button>
+      <button class="btn" id="highlightMenuClose" type="button">Done</button>
+    </div>
+  </section>
+
   <div id="prefs">
     <div class="row">
-      <label>Type size</label>
-      <input type="range" id="fsize" min="14" max="30" step="1">
+      <label for="fsize">Type size</label>
+      <input type="range" id="fsize" aria-label="Type size" min="14" max="30" step="1">
     </div>
     <div class="row">
-      <label>Line spacing</label>
-      <input type="range" id="lheight" min="1.3" max="2.2" step="0.05">
+      <label for="lheight">Line spacing</label>
+      <input type="range" id="lheight" aria-label="Line spacing" min="1.3" max="2.2" step="0.05">
     </div>
     <div class="row">
-      <label>Margins</label>
-      <input type="range" id="marg" min="4" max="24" step="1">
+      <label for="marg">Margins</label>
+      <input type="range" id="marg" aria-label="Page margins" min="4" max="24" step="1">
     </div>
     <div class="row">
       <label>Typeface</label>
       <div class="seg grid" id="faceSeg"></div>
+    </div>
+    <div class="row">
+      <label>Accessibility</label>
+      <label class="pref-check"><input type="checkbox" id="dyslexicToggle"> Wider letter spacing &amp; sans-serif</label>
+      <label class="pref-check"><input type="checkbox" id="contrastToggle"> Higher contrast</label>
     </div>
     <div class="row">
       <label>Page</label>
@@ -567,6 +643,7 @@ body, body *{color:#000 !important}
       <button class="btn btn-solid" id="addMarginNote" type="button">Add note</button>
       <button class="toc-close" id="marginNotesClose" type="button" aria-label="Close margin notes">Close</button>
     </div>
+    <div class="margin-filters"><select class="search" id="marginChapterFilter" aria-label="Filter notes by chapter"><option value="">All chapters</option></select><button class="btn btn-quiet" id="exportBookNotes" type="button">Export book notes</button></div>
     <div id="marginNotesList" tabindex="-1"></div>
   </aside>
 </div>
@@ -594,6 +671,7 @@ body, body *{color:#000 !important}
 <input type="file" id="picker" accept=".epub,application/epub+zip" multiple hidden>
 <input type="file" id="folderPicker" accept=".epub,application/epub+zip" webkitdirectory directory multiple hidden>
 <input type="file" id="coverPicker" accept="image/*" hidden>
+<input type="file" id="backupPicker" accept="application/json,.json" hidden>
 
 <script>
 "use strict";
@@ -637,12 +715,39 @@ async function openZip(blob){
   for(let i = 0; i < count; i++){
     if(p + 46 > buf.byteLength || view.getUint32(p, true) !== SIG_CEN) break;
     const method = view.getUint16(p + 10, true);
-    const csize  = view.getUint32(p + 20, true);
-    const nlen   = view.getUint16(p + 28, true);
-    const elen   = view.getUint16(p + 30, true);
-    const clen   = view.getUint16(p + 32, true);
-    const lho    = view.getUint32(p + 42, true);
-    const name   = dec.decode(bytes.subarray(p + 46, p + 46 + nlen));
+    let csize = view.getUint32(p + 20, true);
+    const usize = view.getUint32(p + 24, true);
+    const nlen = view.getUint16(p + 28, true);
+    const elen = view.getUint16(p + 30, true);
+    const clen = view.getUint16(p + 32, true);
+    let lho = view.getUint32(p + 42, true);
+    const extraStart = p + 46 + nlen;
+    const extraEnd = extraStart + elen;
+
+    // ZIP64 values replace only fields whose 32-bit values are sentinels.
+    if(csize === 0xffffffff || usize === 0xffffffff || lho === 0xffffffff){
+      let zip64 = -1;
+      for(let x = extraStart; x + 4 <= extraEnd;){
+        const id = view.getUint16(x, true), size = view.getUint16(x + 2, true);
+        if(x + 4 + size > extraEnd) break;
+        if(id === 0x0001){ zip64 = x + 4; break; }
+        x += 4 + size;
+      }
+      if(zip64 < 0) throw new Error("Malformed ZIP64 entry — missing ZIP64 extra data.");
+      let x = zip64;
+      const read64 = () => {
+        if(x + 8 > extraEnd) throw new Error("Malformed ZIP64 entry — incomplete 64-bit value.");
+        const value = Number(view.getBigUint64(x, true));
+        x += 8;
+        if(!Number.isSafeInteger(value)) throw new Error("ZIP64 entry is too large to read safely.");
+        return value;
+      };
+      if(usize === 0xffffffff) read64();
+      if(csize === 0xffffffff) csize = read64();
+      if(lho === 0xffffffff) lho = read64();
+    }
+
+    const name = dec.decode(bytes.subarray(p + 46, p + 46 + nlen));
     entries.set(name, {method, csize, lho});
     p += 46 + nlen + elen + clen;
   }
@@ -906,6 +1011,136 @@ function esc(s){
     ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
+function localDateKey(date = new Date()){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+}
+function downloadJSON(name, data){
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type:"application/json"}));
+  const link = el("a"); link.href = url; link.download = name;
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+async function allNotes(){
+  const rows = await DB.all();
+  return rows.filter(row => String(row.id).startsWith("__annotations__") || String(row.id).startsWith("__marginalia__"));
+}
+async function exportBackup(){
+  const rows = await DB.all();
+  const safe = rows.filter(row => row.id === "__prefs__" || row.id === "__reading__"
+      || String(row.id).startsWith("__annotations__") || String(row.id).startsWith("__marginalia__")
+      || !String(row.id).startsWith("__"))
+    .map(row => ({id:row.id, prefs:row.prefs, progress:row.progress, rating:row.rating,
+      lastOpened:row.lastOpened, finishedAt:row.finishedAt, items:row.items, days:row.days, goal:row.goal}));
+  downloadJSON("carrel-amode-backup.json", {format:"carrel-backup", version:1, exportedAt:new Date().toISOString(), records:safe});
+}
+function mergeBackupItems(existing, incoming, kind){
+  const merged = new Map();
+  const sources = [...(Array.isArray(existing) ? existing : []), ...incoming.slice(0, 10000)];
+  for(const raw of sources){
+    if(!raw || typeof raw !== "object" || typeof raw.href !== "string" || raw.href.length > 2000) continue;
+    let item, key;
+    if(kind === "margin"){
+      const frac = Number.isFinite(raw.frac) ? Math.max(0, Math.min(1, raw.frac)) : 0;
+      item = {id:typeof raw.id === "string" ? raw.id.slice(0,100) : `${raw.href}|${frac}|${raw.created || 0}`,
+        href:raw.href, frac, text:typeof raw.text === "string" ? raw.text.slice(0,100000) : "",
+        tags:normalizeTags(raw.tags).slice(0,50), created:Number.isFinite(raw.created) ? raw.created : 0,
+        side:raw.side === "left" ? "left" : "right"};
+      key = item.id;
+    }else{
+      if(!Number.isFinite(raw.start) || !Number.isFinite(raw.end) || raw.start < 0 || raw.end <= raw.start) continue;
+      item = {href:raw.href, start:Math.floor(raw.start), end:Math.floor(raw.end),
+        text:typeof raw.text === "string" ? raw.text.slice(0,100000) : "",
+        note:typeof raw.note === "string" ? raw.note.slice(0,100000) : "",
+        color:["yellow","green","blue","pink"].includes(raw.color) ? raw.color : "green",
+        tags:normalizeTags(raw.tags).slice(0,50), created:Number.isFinite(raw.created) ? raw.created : 0};
+      key = `${item.href}|${item.start}|${item.end}`;
+    }
+    merged.set(key, item);
+  }
+  return [...merged.values()];
+}
+async function importBackup(file){
+  try{
+    const data = JSON.parse(await file.text());
+    if(data.format !== "carrel-backup" || data.version !== 1 || !Array.isArray(data.records))
+      throw new Error("This isn’t a supported Carrel AMode backup.");
+    let restored = 0;
+    for(const source of data.records){
+      if(!source || typeof source.id !== "string") continue;
+      const id = source.id;
+      if(id === "__prefs__" && source.prefs && typeof source.prefs === "object"){
+        await DB.put({id, prefs:source.prefs}); restored++; continue;
+      }
+      if(id === "__reading__" && source.days && typeof source.days === "object"){
+        const current = await DB.get(id) || {id, days:{}};
+        current.days = {...current.days};
+        for(const [date, minutes] of Object.entries(source.days)){
+          const parsedDate = new Date(date + "T00:00:00");
+          if(localDateKey(parsedDate) === date && Number.isFinite(minutes) && minutes >= 0)
+            current.days[date] = Math.max(current.days[date] || 0, Math.floor(minutes));
+        }
+        if(Number.isFinite(source.goal)) current.goal = Math.max(1, Math.min(1440, Math.floor(source.goal)));
+        await DB.put(current); restored++; continue;
+      }
+      if(id.startsWith("__annotations__") || id.startsWith("__marginalia__")){
+        if(Array.isArray(source.items)){
+          const current = await DB.get(id);
+          const kind = id.startsWith("__marginalia__") ? "margin" : "highlight";
+          await DB.put({id, items:mergeBackupItems(current && current.items, source.items, kind)});
+          restored++;
+        }
+        continue;
+      }
+      if(!id.startsWith("__")){
+        const existing = await DB.get(id);
+        if(existing){
+          const progress = source.progress;
+          if(progress && Number.isFinite(progress.overall)){
+            const spine = Number.isFinite(progress.spine) ? Math.max(0, Math.floor(progress.spine)) : 0;
+            const frac = Number.isFinite(progress.frac) ? Math.max(0, Math.min(1, progress.frac)) : 0;
+            existing.progress = {spine, frac, overall:Math.max(0, Math.min(1, progress.overall))};
+          }
+          if(Number.isFinite(source.rating)) existing.rating = Math.max(0, Math.min(5, Math.floor(source.rating)));
+          if(Number.isFinite(source.lastOpened) && source.lastOpened >= 0)
+            existing.lastOpened = Math.max(existing.lastOpened || 0, source.lastOpened);
+          if(Number.isFinite(source.finishedAt) && source.finishedAt >= 0){
+            if(source.finishedAt) existing.finishedAt = source.finishedAt;
+            else delete existing.finishedAt;
+          }
+          await DB.put(existing); restored++;
+        }
+      }
+    }
+    await loadPrefs();
+    await savePrefs();
+    document.body.classList.toggle("high-contrast", !!R.prefs.highContrast);
+    await refresh();
+    say(`Restored backup data for <b>${restored}</b> records. Notes were merged; EPUB files aren’t included.`);
+  }catch(err){ say(`Couldn’t import backup — ${esc(err.message || "invalid backup")}`, 6000); }
+}
+async function renderStats(){
+  const record = await DB.get("__reading__") || {days:{}, goal:20};
+  const goal = Number(record.goal) || 20;
+  $("#dailyGoal").value = goal;
+  const today = localDateKey();
+  const minutes = record.days && record.days[today] || 0;
+  let streak = 0, day = new Date();
+  if(minutes < goal) day.setDate(day.getDate()-1);
+  while((record.days && record.days[localDateKey(day)] || 0) >= goal){ streak++; day.setDate(day.getDate()-1); }
+  const recent = books.slice().filter(book => book.lastOpened).sort((a,b) => b.lastOpened-a.lastOpened).slice(0,5);
+  const completed = books.filter(book => book.finishedAt).sort((a,b) => b.finishedAt-a.finishedAt);
+  const summary = $("#statsSummary");
+  summary.innerHTML = `<div class="stats-row"><b>Today:</b> ${minutes} / ${goal} minutes ${minutes >= goal ? "· Goal reached" : ""}<br><b>Current streak:</b> ${streak} ${streak === 1 ? "day" : "days"}</div>`;
+  const recentRow = el("div", "stats-row");
+  recentRow.innerHTML = "<b>Recently opened</b>";
+  if(!recent.length) recentRow.append(" — none yet");
+  for(const book of recent){ const line=el("div"); line.textContent=`${book.title} · ${new Date(book.lastOpened).toLocaleDateString()}`; recentRow.appendChild(line); }
+  summary.appendChild(recentRow);
+  const doneRow = el("div", "stats-row"); doneRow.innerHTML = "<b>Recently finished</b>";
+  if(!completed.length) doneRow.append(" — no finished books yet");
+  for(const book of completed.slice(0,5)){ const line=el("div"); line.textContent=`${book.title} · ${new Date(book.finishedAt).toLocaleDateString()}`; doneRow.appendChild(line); }
+  summary.appendChild(doneRow);
+}
 function renderShelf(){
   const q = $("#q").value.trim().toLowerCase();
   const mode = $("#sort").value;
@@ -984,8 +1219,8 @@ async function renderLibraryNotes(){
   }
   libraryNoteItems = items;
 
-  const bookFilter = $("#notesBookFilter"), tagFilter = $("#notesTagFilter");
-  const oldBook = bookFilter.value, oldTag = tagFilter.value;
+  const bookFilter = $("#notesBookFilter"), tagFilter = $("#notesTagFilter"), chapterFilter = $("#notesChapterFilter");
+  const oldBook = bookFilter.value, oldTag = tagFilter.value, oldChapter = chapterFilter.value;
   bookFilter.innerHTML = '<option value="">All books</option>';
   for(const book of books.slice().sort((a,b) => a.title.localeCompare(b.title))){
     const option = el("option"); option.value = book.id; option.textContent = book.title; bookFilter.appendChild(option);
@@ -995,6 +1230,10 @@ async function renderLibraryNotes(){
   const tags = [...new Set(items.flatMap(item => item.tags))].sort((a,b) => a.localeCompare(b));
   for(const tag of tags){ const option = el("option"); option.value = tag; option.textContent = tag; tagFilter.appendChild(option); }
   if(tags.includes(oldTag)) tagFilter.value = oldTag;
+  chapterFilter.innerHTML = '<option value="">All chapters</option>';
+  const chapters = [...new Map(items.filter(item => item.href).map(item => [`${item.bookId}|${item.href}`, item])).values()];
+  for(const item of chapters){ const option=el("option"); option.value=`${item.bookId}|${item.href}`; option.textContent=`${item.bookTitle} · ${item.href}`; chapterFilter.appendChild(option); }
+  if([...chapterFilter.options].some(option => option.value === oldChapter)) chapterFilter.value = oldChapter;
   showLibraryNotes();
 }
 
@@ -1002,8 +1241,10 @@ function showLibraryNotes(){
   const bookId = $("#notesBookFilter").value;
   const tag = $("#notesTagFilter").value;
   const kind = $("#notesTypeFilter").value;
+  const chapter = $("#notesChapterFilter").value;
   const matches = libraryNoteItems.filter(item => (!bookId || item.bookId === bookId)
-    && (!tag || item.tags.includes(tag)) && (!kind || item.kind === kind))
+    && (!tag || item.tags.includes(tag)) && (!kind || item.kind === kind)
+    && (!chapter || `${item.bookId}|${item.href}` === chapter))
     .sort((a,b) => b.created - a.created);
   const list = $("#libraryNotesList");
   list.innerHTML = "";
@@ -1043,12 +1284,22 @@ async function openLibraryNote(item){
   if(!R.book) return;
   const index = R.book.spine.findIndex(section => section.href === item.href);
   if(index < 0) return;
-  let frac = item.frac || 0;
-  if(item.kind === "highlight") frac = R.lengths[index] ? item.start / R.lengths[index] : 0;
+  const frac = item.kind === "margin" ? item.frac || 0 : 0;
   await gotoSpine(index, Math.max(0, Math.min(1, frac)));
+  if(item.kind === "highlight"){
+    const root = $("#page").contentDocument.getElementById("__flow");
+    const range = root && rangeAtTextOffsets(root, item.start, item.end);
+    const rect = range && range.getClientRects()[0];
+    if(rect){
+      const x = rect.left - root.getBoundingClientRect().left - R.padX;
+      R.page = Math.max(0, Math.min(R.pages - 1, Math.floor(Math.max(0, x) / R.step)));
+      paint();
+      saveProgress();
+    }
+  }
 }
 
-const INTERNAL = id => id === "__prefs__" || String(id).startsWith("__pages__")
+const INTERNAL = id => id === "__prefs__" || id === "__reading__" || String(id).startsWith("__pages__")
   || String(id).startsWith("__annotations__") || String(id).startsWith("__marginalia__");
 
 async function refresh(){
@@ -1071,7 +1322,7 @@ function say(html, hold = 3200){
 
 async function importFiles(fileList){
   const files = [...fileList].filter(f => /\.epub$/i.test(f.name) || f.type === "application/epub+zip");
-  if(!files.length){ say("Those aren’t EPUB files. Carrel reads <b>.epub</b> only."); return; }
+  if(!files.length){ say("Those aren’t EPUB files. Carrel AMode reads <b>.epub</b> only."); return; }
 
   let ok = 0;
   const failed = [];
@@ -1199,7 +1450,9 @@ function openSheet(id){
   const rb = $("#resetBtn");
   if(rb) rb.addEventListener("click", async () => {
     const rec = await DB.get(id);
+    if(!rec) return;
     rec.progress = null;
+    delete rec.finishedAt;
     await DB.put(rec);
     await refresh();
     openSheet(id);
@@ -1230,20 +1483,97 @@ const R = {
   pageCounts: null, pagesTotal: 0, density: [],
   paginating: false, rerun: false, busy: false,
   chapterTitles: [], marginItems: [],
-  prefs: {size: 19, line: 1.6, margin: 12, face: "literary", theme: "paper"}
+  prefs: {size: 19, line: 1.6, margin: 12, face: "literary", theme: "paper", dyslexic:false, highContrast:false}
 };
 
 // Reading preferences are UI state, not library data — keep them in one record.
+function normalizePrefs(source = {}){
+  const number = (value, fallback, min, max, step = 1) => {
+    const n = Number(value);
+    if(!Number.isFinite(n)) return fallback;
+    return Math.max(min, Math.min(max, Math.round(n / step) * step));
+  };
+  const face = source.face === "serif" ? "literary" : source.face;
+  return {
+    size: number(source.size, 19, 14, 30),
+    line: number(source.line, 1.6, 1.3, 2.2, 0.05),
+    margin: number(source.margin, 12, 4, 24),
+    face: FACES[face] ? face : "literary",
+    theme: ["paper", "sepia", "night"].includes(source.theme) ? source.theme : "paper",
+    dyslexic: source.dyslexic === true,
+    highContrast: source.highContrast === true
+  };
+}
 async function loadPrefs(){
   const rec = await DB.get("__prefs__");
-  if(rec && rec.prefs) Object.assign(R.prefs, rec.prefs);
-  // earlier builds stored face as "serif"/"sans"
-  if(R.prefs.face === "serif") R.prefs.face = "literary";
-  if(!FACES[R.prefs.face]) R.prefs.face = "literary";
+  R.prefs = normalizePrefs(rec && rec.prefs || R.prefs);
 }
-async function savePrefs(){ await DB.put({id: "__prefs__", prefs: R.prefs}); }
+async function savePrefs(){ await DB.put({id: "__prefs__", prefs: normalizePrefs(R.prefs)}); }
 
 let openingBook = false;
+let previousLocation = null;
+let lastReadingActivity = Date.now();
+let searchHits = [];
+let searchSequence = 0;
+let searchTimer;
+function rememberLocation(){
+  if(!R.book || !R.id) return;
+  previousLocation = {id:R.id, spine:R.spineIndex, frac:R.pages > 1 ? R.page/(R.pages-1) : 0};
+  $("#returnBtn").hidden = false;
+}
+async function returnToPrevious(){
+  if(!previousLocation || previousLocation.id !== R.id) return;
+  const target = previousLocation;
+  rememberLocation();
+  await gotoSpine(target.spine, target.frac);
+}
+async function searchBook(){
+  if(!R.book || !R.zip) return;
+  clearSearchHighlight();
+  const sequence = ++searchSequence;
+  const query = $("#bookSearch").value.trim();
+  const list = $("#searchResults");
+  list.innerHTML = ""; searchHits = [];
+  if(query.length < 2){ list.textContent = "Enter at least two characters to search."; return; }
+  const needle = query.replace(/\s+/g, " ").trim().toLocaleLowerCase();
+  if(!needle){ list.textContent = "Enter at least two characters to search."; return; }
+  const hits = [];
+  list.textContent = "Searching…";
+  for(let i=0; i<R.book.spine.length && hits.length<100; i++){
+    if(sequence !== searchSequence) return;
+    let source = "";
+    try{ source = await R.zip.text(R.book.spine[i].href) || ""; }catch(_){ }
+    if(sequence !== searchSequence) return;
+    const doc = new DOMParser().parseFromString(source, "text/html");
+    doc.querySelectorAll("script,style,head").forEach(node => node.remove());
+    const text = (doc.body ? doc.body.textContent : doc.documentElement.textContent).replace(/\s+/g," ").trim();
+    const lower = text.toLocaleLowerCase();
+    let at = 0, found = 0;
+    while((at = lower.indexOf(needle, at)) >= 0 && found < 12 && hits.length < 100){
+      const from = Math.max(0, at-65), to = Math.min(text.length, at+query.length+95);
+      const chapter = R.chapterTitles[i] || `Section ${i+1}`;
+      hits.push({spine:i, frac:text.length ? at/text.length : 0, offset:at, query, chapter,
+        excerpt:(from ? "…" : "") + text.slice(from,to) + (to<text.length ? "…" : "")});
+      at += Math.max(1, query.length); found++;
+    }
+  }
+  if(sequence !== searchSequence) return;
+  searchHits = hits;
+  list.innerHTML = "";
+  if(!hits.length){ list.textContent = `No matches for “${query}”.`; return; }
+  hits.forEach((hit,index) => {
+    const button=el("button","search-result"); button.type="button"; button.dataset.hit=index;
+    const heading=el("small"); heading.textContent=hit.chapter;
+    const excerpt=el("span"); excerpt.textContent=hit.excerpt;
+    button.append(heading,excerpt); list.appendChild(button);
+  });
+}
+async function exportBookNotes(){
+  if(!R.id) return;
+  const rows = await allNotes();
+  const notes = rows.filter(row => row.id === "__annotations__" + R.id || row.id === "__marginalia__" + R.id);
+  downloadJSON("carrel-amode-book-notes.json", {format:"carrel-notes", version:1, bookId:R.id, title:R.book.meta && R.book.meta.title, notes});
+}
 async function openBook(id){
   if(openingBook) return;
   openingBook = true;
@@ -1263,6 +1593,9 @@ async function openBookTask(id){
     return;
   }
   R.id = id;
+  lastReadingActivity = Date.now();
+  previousLocation = null;
+  $("#returnBtn").hidden = true;
   const marginRecord = await DB.get("__marginalia__" + id);
   R.marginItems = (marginRecord && marginRecord.items) || [];
 
@@ -1286,6 +1619,9 @@ async function openBookTask(id){
   $("#library").classList.add("hidden");
   $("#reader").classList.add("on");
   $("#reader").dataset.theme = R.prefs.theme;
+  $("#reader").dataset.dyslexic = String(!!R.prefs.dyslexic);
+  $("#reader").dataset.highContrast = String(!!R.prefs.highContrast);
+  document.body.classList.toggle("high-contrast", !!R.prefs.highContrast);
   syncPrefUI();
   buildToc();
   await gotoSpine(start.spine || 0, start.frac || 0);
@@ -1295,6 +1631,8 @@ async function openBookTask(id){
 
 function closeBook(){
   $("#reader").classList.remove("on");
+  $("#searchPanel").classList.remove("on");
+  $("#searchBtn").setAttribute("aria-expanded", "false");
   $("#library").classList.remove("hidden");
   $("#toc").classList.remove("on");
   $("#prefs").classList.remove("on");
@@ -1366,11 +1704,11 @@ const FACES = {
 
 function readerCSS(){
   const p = R.prefs;
-  const face = (FACES[p.face] || FACES.literary).stack;
+  const face = p.dyslexic ? `Arial,Verdana,sans-serif` : (FACES[p.face] || FACES.literary).stack;
   // Justification needs variable-width glyphs to close up rivers; mono has none.
   const align = p.face === "mono" ? "left" : "justify";
   const hyph  = p.face === "mono" ? "none" : "auto";
-  const bg = {paper:"#f5f0e3", sepia:"#eee6d3", night:"#dfe8d7"}[p.theme];
+  const bg = p.highContrast ? "#ffffff" : {paper:"#f5f0e3", sepia:"#eee6d3", night:"#dfe8d7"}[p.theme];
   const fg = "#000000";
   const link = "#000000";
   return `
@@ -1389,6 +1727,7 @@ function readerCSS(){
       font-family:${face} !important;
       font-size:${p.size}px !important;
       line-height:${p.line} !important;
+      letter-spacing:${p.dyslexic ? ".035em" : "normal"} !important;
       text-align:${align};
       hyphens:${hyph}; -webkit-hyphens:${hyph};
       orphans:2; widows:2;
@@ -1418,6 +1757,15 @@ function readerCSS(){
       box-shadow:0 .12em 0 #6c9848; border-radius:2px;
       -webkit-box-decoration-break:clone; box-decoration-break:clone;
     }
+    #__flow .carrel-highlight[data-color="yellow"]{background-color:#ffe36e !important;box-shadow:0 .12em 0 #bd941b}
+    #__flow .carrel-highlight[data-color="green"]{background-color:#b8e986 !important;box-shadow:0 .12em 0 #6c9848}
+    #__flow .carrel-highlight[data-color="blue"]{background-color:#9edcf2 !important;box-shadow:0 .12em 0 #4b9ab7}
+    #__flow .carrel-highlight[data-color="pink"]{background-color:#f5b4c8 !important;box-shadow:0 .12em 0 #bd6d89}
+    #__flow .carrel-search-hit{
+      display:inline; background-color:#ffe36e !important; color:#000 !important;
+      box-shadow:0 .12em 0 #bd941b; border-radius:2px;
+      -webkit-box-decoration-break:clone; box-decoration-break:clone;
+    }
     ::selection{background:${link};color:${bg}}
   `;
 }
@@ -1438,8 +1786,9 @@ async function buildChapter(index){
     ? new DOMParser().parseFromString(html, "text/html")   // fall back to lenient HTML parsing
     : doc;
 
-  // Books ship scripts and inline handlers. Strip them — nothing needs to run.
-  dom.querySelectorAll("script").forEach(n => n.remove());
+  // EPUBs are untrusted input. Remove executable/embedded browsing content and
+  // inline handlers before serializing the chapter into the same-origin frame.
+  dom.querySelectorAll("script,iframe,object,embed,base,meta[http-equiv]").forEach(n => n.remove());
   dom.querySelectorAll("*").forEach(n => {
     for(const a of [...n.attributes]) if(/^on/i.test(a.name)) n.removeAttribute(a.name);
   });
@@ -1466,14 +1815,23 @@ async function buildChapter(index){
     else img.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", url);
   }));
 
-  // Tag internal links so clicks can be routed to the right spine entry.
+  // Route internal links through the reader; allow only inert, expected external schemes.
   for(const a of [...dom.querySelectorAll("a[href]")]){
-    const href = a.getAttribute("href");
-    if(/^[a-z][a-z0-9+.-]*:/i.test(href)){ a.setAttribute("target", "_blank"); a.setAttribute("rel","noopener"); continue; }
+    const href = (a.getAttribute("href") || "").trim();
+    if(/^[a-z][a-z0-9+.-]*:/i.test(href)){
+      if(/^(https?:|mailto:)/i.test(href)){
+        a.setAttribute("target", "_blank");
+        a.setAttribute("rel", "noopener noreferrer");
+      }else{
+        a.removeAttribute("href");
+      }
+      continue;
+    }
     const fragment = href.includes("#") ? href.slice(href.indexOf("#")) : "";
     const p = href.startsWith("#") ? item.href : joinPath(base, href);
-    if(p && fragment){ a.setAttribute("data-jump", p + fragment); a.setAttribute("href", "javascript:void 0"); }
-    else if(p){ a.setAttribute("data-jump", p); a.setAttribute("href", "javascript:void 0"); }
+    if(p && fragment){ a.setAttribute("data-jump", p + fragment); a.setAttribute("href", "#"); }
+    else if(p){ a.setAttribute("data-jump", p); a.setAttribute("href", "#"); }
+    else a.removeAttribute("href");
   }
 
   const body = dom.body || dom.documentElement;
@@ -1481,6 +1839,7 @@ async function buildChapter(index){
 }
 
 async function renderChapter(){
+  closeHighlightMenu();
   const {css, html} = await buildChapter(R.spineIndex);
   writeFrame($("#page"), css, html);
   await settle($("#page").contentDocument, 2000);
@@ -1498,9 +1857,16 @@ async function renderChapter(){
 function writeFrame(frame, css, html){
   const d = frame.contentDocument;
   d.open();
-  d.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><style>${css}</style></head>` +
-          `<body><div id="__flow">${html}<span id="__probe" aria-hidden="true"></span></div></body></html>`);
+  d.write('<!DOCTYPE html><html><head><meta charset="utf-8"></head>' +
+          '<body><div id="__flow"></div></body></html>');
   d.close();
+  // Assign untrusted EPUB CSS as text, not inside a document.write style tag;
+  // otherwise a literal </style> in a book stylesheet could escape the element.
+  const style = d.createElement("style");
+  style.textContent = css;
+  d.head.appendChild(style);
+  const flow = d.getElementById("__flow");
+  flow.innerHTML = html + '<span id="__probe" aria-hidden="true"></span>';
 }
 
 function textPoint(root, node, offset){
@@ -1532,21 +1898,179 @@ function rangeAtTextOffsets(root, start, end){
   return range;
 }
 
+function searchRange(root, query, preferredOffset = 0){
+  const needle = String(query || "").trim().replace(/\s+/g, " ").toLocaleLowerCase();
+  if(!needle) return null;
+  const doc = root.ownerDocument;
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let text = "";
+  const positions = [];
+  while(walker.nextNode()){
+    const node = walker.currentNode;
+    if(node.parentElement && node.parentElement.closest("#__probe")) continue;
+    for(let i = 0; i < node.data.length; i++){
+      const char = node.data[i];
+      if(/\s/.test(char)){
+        if(!text || text.endsWith(" ")) continue;
+        text += " ";
+        positions.push({node, start:i, end:i+1});
+      }else{
+        text += char;
+        positions.push({node, start:i, end:i+1});
+      }
+    }
+  }
+  if(text.endsWith(" ")){ text = text.slice(0,-1); positions.pop(); }
+  const lower = text.toLocaleLowerCase();
+  let at = lower.indexOf(needle), best = -1, distance = Infinity;
+  while(at >= 0){
+    const nextDistance = Math.abs(at - preferredOffset);
+    if(nextDistance < distance){ best = at; distance = nextDistance; }
+    at = lower.indexOf(needle, at + 1);
+  }
+  if(best < 0 || !positions[best] || !positions[best + needle.length - 1]) return null;
+  const start = positions[best], end = positions[best + needle.length - 1];
+  const range = doc.createRange();
+  range.setStart(start.node, start.start);
+  range.setEnd(end.node, end.end);
+  return range;
+}
+
+function clearSearchHighlight(doc = $("#page").contentDocument){
+  if(!doc) return;
+  doc.querySelectorAll("#__flow .carrel-search-hit").forEach(mark => {
+    const parent = mark.parentNode;
+    while(mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    mark.remove();
+    if(parent.normalize) parent.normalize();
+  });
+}
+
+function showSearchHighlight(hit){
+  const root = $("#page").contentDocument.getElementById("__flow");
+  if(!root || !hit) return false;
+  const range = searchRange(root, hit.query, hit.offset);
+  if(!range) return false;
+  const rects = range.getClientRects();
+  if(rects.length){
+    const x = rects[0].left - root.getBoundingClientRect().left - R.padX;
+    R.page = Math.max(0, Math.min(R.pages - 1, Math.floor(Math.max(0, x) / R.step)));
+    paint();
+  }
+  // Wrap matched text fragments separately; a match may cross block markup.
+  const doc = root.ownerDocument;
+  const walker = doc.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  const startIndex = nodes.indexOf(range.startContainer);
+  const endIndex = nodes.indexOf(range.endContainer);
+  if(startIndex < 0 || endIndex < startIndex) return false;
+  const label = `Search match: ${range.toString()}`;
+  for(let i = endIndex; i >= startIndex; i--){
+    const original = nodes[i];
+    const from = i === startIndex ? range.startOffset : 0;
+    const to = i === endIndex ? range.endOffset : original.data.length;
+    if(to <= from) continue;
+    if(to < original.data.length) original.splitText(to);
+    const selected = from > 0 ? original.splitText(from) : original;
+    const mark = doc.createElement("span");
+    mark.className = "carrel-search-hit";
+    mark.setAttribute("aria-label", label);
+    selected.parentNode.insertBefore(mark, selected);
+    mark.appendChild(selected);
+  }
+  return true;
+}
+
 function normalizeTags(tags){
   const values = Array.isArray(tags) ? tags : String(tags || "").split(",");
   return [...new Set(values.map(tag => String(tag).trim()).filter(Boolean))];
 }
 
-function markRange(range, note = "", tags = []){
+const HIGHLIGHT_COLORS = {yellow:"#ffe36e", green:"#b8e986", blue:"#9edcf2", pink:"#f5b4c8"};
+let activeHighlight = null;
+
+function markRange(range, note = "", tags = [], color = "green"){
   const mark = range.startContainer.ownerDocument.createElement("span");
   const labels = normalizeTags(tags);
+  color = Object.hasOwn(HIGHLIGHT_COLORS, color) ? color : "green";
   mark.className = "carrel-highlight";
+  mark.dataset.color = color;
+  mark.dataset.hasNote = String(!!note);
   mark.tabIndex = 0;
   mark.setAttribute("role", "button");
-  mark.title = [note ? `Note: ${note}` : "", labels.length ? `Tags: ${labels.join(", ")}` : "", "Press Enter to edit"].filter(Boolean).join(" · ");
-  mark.setAttribute("aria-label", `Highlighted passage: ${range.toString().trim()}. ${note ? "Has a note. " : ""}${labels.length ? `Tags: ${labels.join(", ")}. ` : ""}Press Enter to edit.`);
+  mark.title = [note ? `Note: ${note}` : "", labels.length ? `Tags: ${labels.join(", ")}` : "", "Click for highlight options"].filter(Boolean).join(" · ");
+  mark.setAttribute("aria-label", `Highlighted passage: ${range.toString().trim()}. ${note ? "Has a note. " : ""}${labels.length ? `Tags: ${labels.join(", ")}. ` : ""}Click for highlight options.`);
   mark.appendChild(range.extractContents());
   range.insertNode(mark);
+  return mark;
+}
+
+function openHighlightMenu(mark){
+  if(!mark || !mark.isConnected) return;
+  activeHighlight = mark;
+  const menu = $("#highlightMenu"), frame = $("#page");
+  const rect = mark.getBoundingClientRect(), frameRect = frame.getBoundingClientRect();
+  const x = frameRect.left + rect.left + Math.min(rect.width / 2, 90);
+  const y = frameRect.top + rect.bottom + 8;
+  menu.classList.add("on");
+  menu.querySelectorAll("[data-highlight-color]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.highlightColor === (mark.dataset.color || "green")));
+  });
+  $("#highlightNoteAction").textContent = mark.dataset.hasNote === "true" ? "Edit note" : "Add note";
+  requestAnimationFrame(() => {
+    const width = menu.offsetWidth, height = menu.offsetHeight;
+    menu.style.left = `${Math.max(10, Math.min(window.innerWidth - width - 10, x - width / 2))}px`;
+    menu.style.top = `${Math.max(10, Math.min(window.innerHeight - height - 10, y + height > window.innerHeight ? frameRect.top + rect.top - height - 8 : y))}px`;
+  });
+  $("#highlightMenuClose").focus();
+}
+
+function closeHighlightMenu(returnFocus = false){
+  $("#highlightMenu").classList.remove("on");
+  if(returnFocus && activeHighlight && activeHighlight.isConnected) activeHighlight.focus();
+  activeHighlight = null;
+}
+
+async function updateHighlightColor(mark, color){
+  if(!mark || !Object.hasOwn(HIGHLIGHT_COLORS, color) || !R.id || !R.book) return;
+  const root = $("#page").contentDocument.getElementById("__flow");
+  const range = mark.ownerDocument.createRange();
+  range.selectNodeContents(mark);
+  const start = textPoint(root, range.startContainer, range.startOffset);
+  const end = textPoint(root, range.endContainer, range.endOffset);
+  const key = "__annotations__" + R.id, stored = await DB.get(key);
+  const href = R.book.spine[R.spineIndex].href;
+  const item = stored && stored.items.find(a => a.href === href && a.start === start && a.end === end);
+  if(!item) return;
+  item.color = color;
+  await DB.put(stored);
+  mark.dataset.color = color;
+  $("#highlightMenu").querySelectorAll("[data-highlight-color]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.highlightColor === color));
+  });
+  say("Highlight color updated.");
+}
+
+async function deleteHighlight(mark){
+  if(!mark || !R.id || !R.book) return;
+  const root = $("#page").contentDocument.getElementById("__flow");
+  const range = mark.ownerDocument.createRange();
+  range.selectNodeContents(mark);
+  const start = textPoint(root, range.startContainer, range.startOffset);
+  const end = textPoint(root, range.endContainer, range.endOffset);
+  const key = "__annotations__" + R.id, stored = await DB.get(key);
+  const href = R.book.spine[R.spineIndex].href;
+  if(stored){
+    stored.items = stored.items.filter(item => !(item.href === href && item.start === start && item.end === end));
+    await DB.put(stored);
+  }
+  const parent = mark.parentNode;
+  while(mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+  mark.remove();
+  if(parent.normalize) parent.normalize();
+  closeHighlightMenu();
+  say("Highlight deleted.");
 }
 
 let noteEditorResolve = null;
@@ -1594,8 +2118,9 @@ async function editHighlightNote(mark){
   item.tags = normalizeTags(edited.tags);
   await DB.put(stored);
   const labels = item.tags.length ? `Tags: ${item.tags.join(", ")}` : "";
-  mark.title = [item.note ? `Note: ${item.note}` : "", labels, "Press Enter to edit"].filter(Boolean).join(" · ");
-  mark.setAttribute("aria-label", `Highlighted passage: ${mark.textContent.trim()}. ${item.note ? "Has a note. " : ""}${item.tags.length ? `Tags: ${item.tags.join(", ")}. ` : ""}Press Enter to edit.`);
+  mark.dataset.hasNote = String(!!item.note);
+  mark.title = [item.note ? `Note: ${item.note}` : "", labels, "Click for highlight options"].filter(Boolean).join(" · ");
+  mark.setAttribute("aria-label", `Highlighted passage: ${mark.textContent.trim()}. ${item.note ? "Has a note. " : ""}${item.tags.length ? `Tags: ${item.tags.join(", ")}. ` : ""}Click for highlight options.`);
   say(item.note || item.tags.length ? "Note saved." : "Note removed.");
 }
 
@@ -1610,43 +2135,45 @@ async function restoreHighlights(spineIndex){
   if(!root) return;
   for(const item of items){
     const range = rangeAtTextOffsets(root, item.start, item.end);
-    if(range && range.toString() === item.text) markRange(range, item.note || "", item.tags || []);
+    if(range && range.toString() === item.text) markRange(range, item.note || "", item.tags || [], item.color || "green");
   }
 }
 
+let highlightSaving = false;
 async function addHighlight(){
-  if(!R.id || !R.book) return;
+  if(highlightSaving || !R.id || !R.book) return;
   const doc = $("#page").contentDocument;
   const selection = doc.getSelection();
   const root = doc.getElementById("__flow");
-  if(!selection || selection.isCollapsed || !root){
-    say("Select some text first, then choose Highlight.");
-    return;
-  }
-  const range = selection.getRangeAt(0);
-  if(!root.contains(range.startContainer) || !root.contains(range.endContainer)) return;
+  if(!selection || selection.isCollapsed || !root) return;
+  const selectedRange = selection.getRangeAt(0);
+  if(!root.contains(selectedRange.startContainer) || !root.contains(selectedRange.endContainer)) return;
+  const range = selectedRange.cloneRange();
   const start = textPoint(root, range.startContainer, range.startOffset);
   const end = textPoint(root, range.endContainer, range.endOffset);
-  const text = selection.toString();
+  const text = range.toString();
   if(!text.trim() || end <= start) return;
 
+  highlightSaving = true;
   try{
     const key = "__annotations__" + R.id;
     const stored = await DB.get(key) || {id: key, items: []};
     const href = R.book.spine[R.spineIndex].href;
-    const exists = stored.items.some(item => item.href === href
-      && item.start === start && item.end === end);
-    if(exists){
-      say("That text is already highlighted.");
+    const overlaps = stored.items.some(item => item.href === href
+      && start < item.end && end > item.start);
+    if(overlaps){
+      say("That text overlaps an existing highlight.");
       return;
     }
-    stored.items.push({href, start, end, text, note: ""});
+    stored.items.push({href, start, end, text, note: "", tags:[], color:"green", created:Date.now()});
     await DB.put(stored);
     markRange(range);
     selection.removeAllRanges();
-    say("Highlight saved. Click it to add a note.");
+    say("Highlight saved. Click it for colors, notes, or delete.");
   }catch(_){
     say("Couldn’t save that highlight.");
+  }finally{
+    highlightSaving = false;
   }
 }
 
@@ -1693,7 +2220,16 @@ async function renderMarginNotes(){
   const key = "__marginalia__" + R.id;
   const stored = await DB.get(key);
   R.marginItems = (stored && stored.items) || [];
-  const items = R.marginItems.slice().sort((a, b) => b.created - a.created);
+  const chapterFilter = $("#marginChapterFilter");
+  const oldChapter = chapterFilter.value;
+  chapterFilter.innerHTML = '<option value="">All chapters</option>';
+  R.book.spine.forEach((section, index) => {
+    const option = el("option"); option.value = section.href;
+    option.textContent = R.chapterTitles[index] || `Section ${index + 1}`;
+    chapterFilter.appendChild(option);
+  });
+  if([...chapterFilter.options].some(option => option.value === oldChapter)) chapterFilter.value = oldChapter;
+  const items = R.marginItems.slice().filter(item => !chapterFilter.value || item.href === chapterFilter.value).sort((a, b) => b.created - a.created);
   const list = $("#marginNotesList");
   list.innerHTML = "";
   if(!items.length){
@@ -1883,7 +2419,8 @@ function paint(animateTurn = false){
    full chapters, which is what pushed the percentage far ahead of the reader. */
 function overall(){
   if(!R.lengths || !R.lengths.length) return 0;
-  const within = R.pages > 1 ? R.page / (R.pages - 1) : 1;
+  // A one-page chapter has not been read in full just because it is the only page.
+  const within = R.pages > 1 ? R.page / (R.pages - 1) : 0;
   const pos = R.before[R.spineIndex] + within * R.lengths[R.spineIndex];
   return Math.max(0, Math.min(1, pos / R.totalChars));
 }
@@ -1894,7 +2431,7 @@ function overall(){
    reflow, so changing the type size recounts but reopening the book doesn't. */
 function layoutSig(){
   const p = R.prefs, f = $("#page");
-  return [p.size, p.line, p.margin, p.face, f.clientWidth, f.clientHeight].join("|");
+  return [p.size, p.line, p.margin, p.face, p.dyslexic, f.clientWidth, f.clientHeight].join("|");
 }
 
 async function paginateBook(){
@@ -1915,7 +2452,9 @@ async function paginateRun(){
 
   const cached = await DB.get(key);
   if(R.book !== book || R.id !== id) return;
-  if(cached && cached.sig === sig && cached.counts.length === book.spine.length){
+  if(cached && cached.sig === sig && Array.isArray(cached.counts)
+      && cached.counts.length === book.spine.length
+      && cached.counts.every(count => Number.isInteger(count) && count >= 1)){
     R.pageCounts = cached.counts;
     R.pagesTotal = cached.counts.reduce((a, b) => a + b, 0);
     try{ writeFrame($("#ghost"), "", ""); }catch(_){}
@@ -1963,33 +2502,41 @@ function wireFrame(){
     const mark = e.target.closest && e.target.closest(".carrel-highlight");
     if(mark){
       e.preventDefault();
-      editHighlightNote(mark);
+      clearSearchHighlight(d);
+      openHighlightMenu(mark);
       reveal();
       return;
     }
+    if($("#highlightMenu").classList.contains("on")) closeHighlightMenu();
     const a = e.target.closest && e.target.closest("a[data-jump]");
     if(a){
       e.preventDefault();
+      clearSearchHighlight(d);
       const target = a.getAttribute("data-jump");
       const hash = target.indexOf("#");
       const path = hash < 0 ? target : target.slice(0, hash);
       const fragment = hash < 0 ? "" : target.slice(hash + 1);
       const idx = R.book.spine.findIndex(s => s.href === path);
-      if(idx >= 0) gotoSpine(idx, 0, fragment);
+      if(idx >= 0){ rememberLocation(); gotoSpine(idx, 0, fragment); reveal(); }
       return;
     }
+    clearSearchHighlight(d);
     reveal();
   });
   d.addEventListener("keydown", e => {
     const mark = e.target.closest && e.target.closest(".carrel-highlight");
     if(mark && (e.key === "Enter" || e.key === " ")){
       e.preventDefault();
-      e.stopPropagation();
-      editHighlightNote(mark);
+      e.stopImmediatePropagation();
+      openHighlightMenu(mark);
       reveal();
     }
   });
   d.addEventListener("keydown", onKey);
+  d.addEventListener("mouseup", addHighlight);
+  d.addEventListener("keyup", e => {
+    if(e.shiftKey || e.key.startsWith("Arrow")) addHighlight();
+  });
   d.addEventListener("mousemove", reveal);
 }
 
@@ -2029,6 +2576,8 @@ async function turn(dir){
   try{
     if(dir > 0 && R.spineIndex < R.book.spine.length - 1){
       await gotoSpine(R.spineIndex + 1, 0);
+    }else if(dir > 0){
+      await markFinished();
     }else if(dir < 0 && R.spineIndex > 0){
       R.spineIndex--;
       R.page = 0;
@@ -2052,11 +2601,34 @@ function saveProgress(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     const rec = await DB.get(id);
-    if(!rec) return;
+    if(!rec || rec.finishedAt) return;
     rec.progress = progress;
     rec.lastOpened = Date.now();
     await DB.put(rec);
   }, 350);
+}
+
+async function markFinished(){
+  if(!R.id) return;
+  clearTimeout(saveTimer);
+  const rec = await DB.get(R.id);
+  if(!rec || rec.finishedAt) return;
+  rec.finishedAt = Date.now();
+  rec.progress = {spine:R.spineIndex, frac:1, overall:1};
+  await DB.put(rec);
+  await refresh();
+  if($("#readingStats").classList.contains("on")) renderStats();
+  say("Book finished — congratulations!");
+}
+
+async function recordReadingMinute(){
+  if(!R.id || document.visibilityState !== "visible" || Date.now()-lastReadingActivity > 120000) return;
+  const record = await DB.get("__reading__") || {id:"__reading__", days:{}, goal:20};
+  const key = localDateKey();
+  record.days = record.days || {};
+  record.days[key] = (record.days[key] || 0) + 1;
+  await DB.put(record);
+  if($("#readingStats").classList.contains("on")) renderStats();
 }
 
 /* — contents — */
@@ -2076,6 +2648,7 @@ function buildToc(){
     a.textContent = t.label;
     a.dataset.spine = idx;
     a.addEventListener("click", () => {
+      rememberLocation();
       gotoSpine(idx, 0, fragment);
       $("#toc").classList.remove("on");
     });
@@ -2091,7 +2664,7 @@ function markToc(){
 /* — chrome fade — */
 let idleTimer;
 function immerse(){ clearTimeout(idleTimer); idleTimer = setTimeout(() => $("#reader").classList.add("immersed"), 2600); }
-function reveal(){ $("#reader").classList.remove("immersed"); immerse(); }
+function reveal(){ lastReadingActivity = Date.now(); $("#reader").classList.remove("immersed"); immerse(); }
 
 /* — preferences — */
 function buildFaceButtons(){
@@ -2103,6 +2676,8 @@ function syncPrefUI(){
   $("#fsize").value = R.prefs.size;
   $("#lheight").value = R.prefs.line;
   $("#marg").value = R.prefs.margin;
+  $("#dyslexicToggle").checked = !!R.prefs.dyslexic;
+  $("#contrastToggle").checked = !!R.prefs.highContrast;
   for(const b of $("#faceSeg").children) b.classList.toggle("on", b.dataset.face === R.prefs.face);
   for(const b of $("#themeSeg").children) b.classList.toggle("on", b.dataset.theme === R.prefs.theme);
 }
@@ -2110,6 +2685,9 @@ function syncPrefUI(){
 async function applyPrefs(){
   const frac = R.pages > 1 ? R.page / (R.pages - 1) : 0;
   $("#reader").dataset.theme = R.prefs.theme;
+  $("#reader").dataset.dyslexic = String(!!R.prefs.dyslexic);
+  $("#reader").dataset.highContrast = String(!!R.prefs.highContrast);
+  document.body.classList.toggle("high-contrast", !!R.prefs.highContrast);
   await savePrefs();
   if(!R.book) return;
   R.density = [];
@@ -2126,13 +2704,28 @@ async function applyPrefs(){
    ═══════════════════════════════════════════════════════════ */
 function onKey(e){
   if($("#noteDialog").classList.contains("on")) return;
-  if($("#reader").classList.contains("on")){
-    if(e.key === "ArrowRight" || e.key === "PageDown"){ e.preventDefault(); turn(1); reveal(); }
+  if(e.key !== "Escape" && e.target instanceof Element && (e.target.closest("button") || e.target.matches("input,textarea,select,[contenteditable=true]"))) return;
+    if($("#reader").classList.contains("on")){
+    if(e.key === "Escape" && $("#highlightMenu").classList.contains("on")){
+      e.preventDefault();
+      closeHighlightMenu(true);
+      return;
+    }
+    if((e.key.toLowerCase() === "f" && (e.ctrlKey || e.metaKey)) || e.key === "/"){
+      e.preventDefault(); $("#searchPanel").classList.add("on"); $("#searchBtn").setAttribute("aria-expanded","true"); $("#bookSearch").focus();
+    }
+    else if(e.key === "ArrowRight" || e.key === "PageDown"){ e.preventDefault(); turn(1); reveal(); }
+
     else if(e.key === "ArrowLeft" || e.key === "PageUp"){ e.preventDefault(); turn(-1); reveal(); }
     else if(e.key === " "){ e.preventDefault(); turn(e.shiftKey ? -1 : 1); reveal(); }
     else if(e.key === "Escape"){
-      if($("#toc").classList.contains("on")) $("#toc").classList.remove("on");
-      else if($("#prefs").classList.contains("on")) $("#prefs").classList.remove("on");
+      if($("#searchPanel").classList.contains("on")){
+        $("#searchPanel").classList.remove("on"); $("#searchBtn").setAttribute("aria-expanded", "false");
+        clearTimeout(searchTimer); searchSequence++;
+        $("#searchBtn").focus();
+      }
+      else if($("#toc").classList.contains("on")){ $("#toc").classList.remove("on"); $("#tocBtn").focus(); }
+      else if($("#prefs").classList.contains("on")){ $("#prefs").classList.remove("on"); $("#prefsBtn").focus(); }
       else if($("#marginNotes").classList.contains("on")){
         $("#marginNotes").classList.remove("on");
         $("#marginNotesBtn").setAttribute("aria-expanded", "false");
@@ -2214,9 +2807,84 @@ $("#libraryNotesClose").addEventListener("click", () => {
   $("#libraryNotes").classList.remove("on");
   $("#libraryNotesBtn").setAttribute("aria-expanded", "false");
 });
-["#notesBookFilter", "#notesTagFilter", "#notesTypeFilter"].forEach(selector =>
+["#notesBookFilter", "#notesTagFilter", "#notesTypeFilter", "#notesChapterFilter"].forEach(selector =>
   $(selector).addEventListener("change", showLibraryNotes));
+$("#exportNotesBtn").addEventListener("click", async () => {
+  downloadJSON("carrel-amode-notes.json", {format:"carrel-notes", version:1, notes:await allNotes()});
+});
+$("#backupBtn").addEventListener("click", exportBackup);
+$("#restoreBtn").addEventListener("click", () => $("#backupPicker").click());
+$("#backupPicker").addEventListener("change", e => {
+  const file=e.target.files && e.target.files[0]; e.target.value="";
+  if(file) importBackup(file);
+});
+$("#statsBtn").addEventListener("click", async () => {
+  const panel=$("#readingStats"), opening=!panel.classList.contains("on");
+  panel.classList.toggle("on",opening); $("#statsBtn").setAttribute("aria-expanded",String(opening));
+  if(opening) await renderStats();
+});
+$("#statsClose").addEventListener("click", () => {
+  $("#readingStats").classList.remove("on"); $("#statsBtn").setAttribute("aria-expanded","false");
+});
+$("#saveGoal").addEventListener("click", async () => {
+  const record=await DB.get("__reading__") || {id:"__reading__",days:{}};
+  record.goal=Math.max(1,Math.min(1440,parseInt($("#dailyGoal").value,10)||20));
+  await DB.put(record); await renderStats(); say("Daily goal saved.");
+});
+$("#returnBtn").addEventListener("click", returnToPrevious);
+$("#searchBtn").addEventListener("click", () => {
+  const panel=$("#searchPanel"), opening=!panel.classList.contains("on");
+  panel.classList.toggle("on",opening); $("#searchBtn").setAttribute("aria-expanded",String(opening));
+  if(opening){ $("#bookSearch").focus(); reveal(); }
+  else { clearTimeout(searchTimer); searchSequence++; }
+});
+$("#searchClose").addEventListener("click", () => {
+  $("#searchPanel").classList.remove("on"); $("#searchBtn").setAttribute("aria-expanded","false");
+  clearTimeout(searchTimer); searchSequence++;
+  $("#searchBtn").focus();
+});
+$("#bookSearch").addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchSequence++;
+  clearSearchHighlight();
+  searchTimer = setTimeout(searchBook, 220);
+});
+$("#bookSearch").addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); clearTimeout(searchTimer); searchBook(); }
+});
+$("#searchResults").addEventListener("click", async e => {
+  const button=e.target.closest("button[data-hit]"); if(!button) return;
+  const hit=searchHits[+button.dataset.hit]; if(!hit) return;
+  clearTimeout(searchTimer); searchSequence++;
+  clearSearchHighlight();
+  $("#searchPanel").classList.remove("on"); $("#searchBtn").setAttribute("aria-expanded","false");
+  rememberLocation();
+  await gotoSpine(hit.spine,hit.frac);
+  showSearchHighlight(hit);
+  reveal();
+});
+$("#marginChapterFilter").addEventListener("change", renderMarginNotes);
+$("#exportBookNotes").addEventListener("click", exportBookNotes);
+$("#dyslexicToggle").addEventListener("change", e => { R.prefs.dyslexic=e.target.checked; applyPrefs(); });
+$("#contrastToggle").addEventListener("change", e => { R.prefs.highContrast=e.target.checked; applyPrefs(); });
 $("#sheet").addEventListener("click", e => { if(e.target.hasAttribute("data-close")) closeSheet(); });
+$("#highlightMenu").addEventListener("click", async e => {
+  const color = e.target.closest("[data-highlight-color]");
+  if(color){ await updateHighlightColor(activeHighlight, color.dataset.highlightColor); return; }
+  if(e.target.closest("#highlightNoteAction")){
+    const mark = activeHighlight;
+    closeHighlightMenu();
+    await editHighlightNote(mark);
+  }else if(e.target.closest("#highlightDeleteAction")){
+    await deleteHighlight(activeHighlight);
+  }else if(e.target.closest("#highlightMenuClose")){
+    closeHighlightMenu(true);
+  }
+});
+document.addEventListener("click", e => {
+  if($("#highlightMenu").classList.contains("on") && !e.target.closest("#highlightMenu"))
+    closeHighlightMenu();
+});
 $("#noteSave").addEventListener("click", () => finishNoteEditor({
   text: $("#noteText").value,
   tags: normalizeTags($("#noteTags").value)
@@ -2250,8 +2918,6 @@ $("#noteDialog").addEventListener("keydown", e => {
 });
 
 $("#backBtn").addEventListener("click", closeBook);
-$("#highlightBtn").addEventListener("mousedown", e => e.preventDefault());
-$("#highlightBtn").addEventListener("click", addHighlight);
 $("#marginNotesBtn").addEventListener("click", async () => {
   const panel = $("#marginNotes");
   const opening = !panel.classList.contains("on");
@@ -2373,17 +3039,19 @@ window.addEventListener("resize", () => {
     document.body.innerHTML =
       '<div style="padding:60px;font-family:system-ui;color:#d9dee7;max-width:520px">' +
       '<h2 style="font-weight:400">This browser is too old</h2>' +
-      '<p style="color:#7f8b9e;line-height:1.6">Carrel unzips books using DecompressionStream, ' +
+      '<p style="color:#7f8b9e;line-height:1.6">Carrel AMode unzips books using DecompressionStream, ' +
       'which needs Chrome 103+, Edge 103+, Safari 16.4+, or Firefox 113+.</p></div>';
     return;
   }
   await loadPrefs();
+  document.body.classList.toggle("high-contrast", !!R.prefs.highContrast);
   buildFaceButtons();
   syncPrefUI();
   // the prefs record isn't a book — keep it out of the shelf
   const rows = (await DB.all()).filter(r => !INTERNAL(r.id));
   books = rows;
   renderShelf();
+  setInterval(recordReadingMinute, 60000);
 })();
 </script>
 </body>
